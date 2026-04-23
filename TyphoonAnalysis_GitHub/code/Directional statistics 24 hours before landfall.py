@@ -1,27 +1,28 @@
 import os
 import pandas as pd
 
-# 获取脚本所在目录，构建正确的文件路径
+# Get script directory and construct correct CSV path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)
 
-# 修正后的 CSV 路径（与你仓库结构一致）
+# Correct CSV path (consistent with your repository structure)
 csv_path = os.path.join(project_root, 'output', 'csv_sheet', 'df_avg_data_per_typhoon.csv')
 
 df = pd.read_csv(csv_path)
 
-# 统计主导移动方向的频数分布
+# Count frequency of dominant movement directions
 direction_counts = df['Dominant_Direction_24h'].value_counts()
-print("主导移动方向频数分布：")
+print("Frequency distribution of dominant movement directions:")
 print(direction_counts)
 
-# 计算百分比
+# Calculate percentages
 direction_percent = df['Dominant_Direction_24h'].value_counts(normalize=True) * 100
-print("\n主导移动方向百分比：")
+print("\nPercentage distribution of dominant movement directions:")
 print(direction_percent)
 
-# 如需按特定顺序显示（例如：N, NE, E, SE, S, SW, W, NW）
+# Display in a specific order (e.g., N, NE, E, SE, S, SW, W, NW)
 ordered_categories = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
 direction_counts_ordered = df['Dominant_Direction_24h'].value_counts().reindex(ordered_categories)
-print("\n按方向顺序排列的频数分布：")
+print("\nFrequency distribution in directional order:")
 print(direction_counts_ordered)
+
