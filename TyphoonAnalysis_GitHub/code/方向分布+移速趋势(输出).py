@@ -156,10 +156,19 @@ def categorize_direction(bearing):
 
 # --- Main execution logic for all steps ---
 print("--- Step 2: Data Loading, Parsing and Initial Filtering ---")
-script_dir = os.path.dirname(__file__)
-cma_data_dir = os.path.join(script_dir, 'data', 'CMA')
-output_dir = os.path.join(script_dir, 'output')
-os.makedirs(output_dir, exist_ok=True) # Ensure output directory exists (确保输出目录存在)
+
+# 正确的 GitHub 仓库路径结构
+script_dir = os.path.dirname(os.path.abspath(__file__))      # 当前脚本所在目录 code/
+project_root = os.path.dirname(script_dir)                   # 回到项目根目录 TyphoonAnalysis_GitHub/
+
+# 修正后的数据与输出路径
+cma_data_dir = os.path.join(project_root, 'data', 'CMA')
+output_dir = os.path.join(project_root, 'output')
+csv_output_dir = os.path.join(output_dir, 'csv_sheet')
+
+# 确保输出目录存在
+os.makedirs(output_dir, exist_ok=True)
+os.makedirs(csv_output_dir, exist_ok=True)
 
 all_cma_tracks = []
 
@@ -174,28 +183,25 @@ else:
     
     for filename in found_files_in_dir:
         if filename.startswith('CH') and filename.endswith('BST.txt') and \
-           len(filename) == 13 and filename[2:6].isdigit(): # CHYYYYBST.txt format (e.g. CH1983BST.txt)
+           len(filename) == 13 and filename[2:6].isdigit():  # CHYYYYBST.txt format
             year_in_filename = int(filename[2:6])
             
             if 1980 <= year_in_filename <= 2024:
-                # print(f"    - Processing file for year {year_in_filename}: {filename}")
                 filepath = os.path.join(cma_data_dir, filename)
                 df_single_year = parse_cma_track_file(filepath)
                 if not df_single_year.empty:
                     all_cma_tracks.append(df_single_year)
                 else:
                     print(f"      - No valid track data parsed from {filename}.")
-        # Note: Skipping files outside the specified year range or not matching naming convention
     
     if all_cma_tracks:
         df_cma_full = pd.concat(all_cma_tracks).reset_index(drop=True)
         print(f"\nCMA complete dataset loaded. Total data entries: {len(df_cma_full)}")
     else:
         print(f"\nERROR: No eligible CMA data files (CHXXXXBST.txt, 1980-2024) were found or successfully parsed in '{cma_data_dir}'.")
-        df_cma_full = pd.DataFrame() 
+        df_cma_full = pd.DataFrame()
 
-# Define the approximate boundaries for South China / East China region (wider for general activity)
-# These are for initial region filtering, not strict landfall.
+# Define the approximate boundaries for South China / East China region
 min_lat_region = 15.0 
 max_lat_region = 40.0 
 min_lon_region = 105.0 
@@ -206,9 +212,12 @@ if not df_cma_full.empty:
         (df_cma_full['LAT'] >= min_lat_region) & (df_cma_full['LAT'] <= max_lat_region) &
         (df_cma_full['LON'] >= min_lon_region) & (df_cma_full['LON'] <= max_lon_region)
     ].copy()
+
     print(f"\nInitial filtering done. Number of typhoon events within wider South/East China region (Lat {min_lat_region}-{max_lat_region}N, Lon {min_lon_region}-{max_lon_region}E): {df_region['SID'].nunique()}")
-    df_region.to_csv(os.path.join(output_dir, 'df_region_filtered.csv'), index=False)
-    print(f"Saved df_region (initial filter) to {os.path.join(output_dir, 'df_region_filtered.csv')}")
+
+# 修正后的 CSV 输出路径（保存到 output/csv_sheet/）
+    df_region.to_csv(os.path.join(csv_output_dir, 'df_region_filtered.csv'), index=False)
+    print(f"Saved df_region (initial filter) to {os.path.join(csv_output_dir, 'df_region_filtered.csv')}")
 else:
     print("\ndf_cma_full is empty, cannot proceed with regional filtering.")
     df_region = pd.DataFrame()
@@ -267,8 +276,8 @@ if not df_region.empty:
         print(f"Identified {len(landfall_points_df)} potential landfall events (>= TS strength) using geospatial bounding box.")
         print("First 5 landfall points identified:")
         print(landfall_points_df.head())
-        landfall_points_df.to_csv(os.path.join(output_dir, 'df_landfall_points_schemeB.csv'), index=False)
-        print(f"Saved identified landfall points to {os.path.join(output_dir, 'df_landfall_points_schemeB.csv')}")
+    landfall_points_df.to_csv(os.path.join(csv_output_dir, 'df_landfall_points_schemeB.csv'), index=False)
+        print(f"Saved identified landfall points to {os.path.join(csv_output_dir, 'df_landfall_points_schemeB.csv')}")
     else:
         print("No landfall events identified using Scheme B. Please check bounding box and intensity criteria.")
 
@@ -301,11 +310,15 @@ if not df_region.empty:
     if all_pre_landfall_tracks:
         df_pre_landfall = pd.concat(all_pre_landfall_tracks).reset_index(drop=True)
         print(f"Successfully retrieved pre-landfall 24-hour data for {df_pre_landfall['SID'].nunique()} typhoons.")
-        df_pre_landfall.to_csv(os.path.join(output_dir, 'df_pre_landfall.csv'), index=False)
-        print(f"Saved df_pre_landfall to {os.path.join(output_dir, 'df_pre_landfall.csv')}")
+
+        # 修正后的 CSV 输出路径（保存到 output/csv_sheet/）
+        df_pre_landfall.to_csv(os.path.join(csv_output_dir, 'df_pre_landfall.csv'), index=False)
+        print(f"Saved df_pre_landfall to {os.path.join(csv_output_dir, 'df_pre_landfall.csv')}")
+
     else:
         print("No sufficient pre-landfall 24-hour data for analysis after landfall identification. Check Step 3 logic.")
-        df_pre_landfall = pd.DataFrame() 
+        df_pre_landfall = pd.DataFrame()
+
 else:
     print("df_region is empty, cannot identify landfall events.")
     df_pre_landfall = pd.DataFrame()
@@ -373,11 +386,12 @@ if not df_pre_landfall.empty:
     print(f"Calculated average pre-landfall 24-hour speeds and dominant directions for {len(df_avg_data_per_typhoon)} typhoons.")
     print("First 5 rows of df_avg_data_per_typhoon:")
     print(df_avg_data_per_typhoon.head())
-    df_avg_data_per_typhoon.to_csv(os.path.join(output_dir, 'df_avg_data_per_typhoon.csv'), index=False)
-    print(f"Saved df_avg_data_per_typhoon to {os.path.join(output_dir, 'df_avg_data_per_typhoon.csv')}")
+    df_avg_data_per_typhoon.to_csv(os.path.join(csv_output_dir, 'df_avg_data_per_typhoon.csv'), index=False)
+    print(f"Saved df_avg_data_per_typhoon to {os.path.join(csv_output_dir, 'df_avg_data_per_typhoon.csv')}")
 else:
     print("df_pre_landfall is empty, cannot calculate typhoon movement speed or direction.")
-    df_avg_data_per_typhoon = pd.DataFrame() 
+    df_avg_data_per_typhoon = pd.DataFrame()
+
 
 
 # --- Step 5: Trend Analysis and Visualization (Movement Speed) ---
@@ -401,10 +415,11 @@ if not df_avg_data_per_typhoon.empty:
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout() # 自动调整布局以适应标签
     
-    plot_filepath_speed = os.path.join(output_dir, 'typhoon_speed_trend_1980_2024.png')
-    plt.savefig(plot_filepath_speed)
+    plot_filepath_speed = os.path.join(output_dir, 'figures', '移速趋势_1980-2024.png')
+    plt.savefig(plot_filepath_speed, dpi=300, bbox_inches='tight')
     print(f"Trend plot for speed saved to {plot_filepath_speed}")
-    plt.show() 
+    plt.show()
+
 else:
     print("df_avg_data_per_typhoon is empty or has no valid speeds, cannot generate speed trend plot.")
 
@@ -431,10 +446,11 @@ if not df_avg_data_per_typhoon.empty:
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         plt.tight_layout()
         
-        plot_filepath_direction = os.path.join(output_dir, 'typhoon_direction_distribution_1980_2024.png')
-        plt.savefig(plot_filepath_direction)
+        plot_filepath_direction = os.path.join(output_dir, 'figures', '方向分布_1980-2024.png')
+        plt.savefig(plot_filepath_direction, dpi=300, bbox_inches='tight')
         print(f"Direction distribution plot saved to {plot_filepath_direction}")
         plt.show()
+
 
         # Application (应用): 这种频次分布可以帮助识别特定区域台风的主要路径偏好。
         # Contrast (对比): 与移速趋势图不同，这是一个分类数据的分布图，而非连续数据的趋势图。
