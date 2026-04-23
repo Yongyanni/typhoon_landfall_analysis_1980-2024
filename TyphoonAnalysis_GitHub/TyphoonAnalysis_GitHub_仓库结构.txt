@@ -1,0 +1,28 @@
+TyphoonAnalysis_GitHub/
+│
+├── data/                     # 原始数据（如果文件不大）
+│   └── CMA/                  # 存放 CH1980BST.txt ~ CH2024BST.txt
+│
+├── code/                     # 所有 Python 脚本
+│   ├── 方向分布+移速趋势(输出).py
+│   ├── NW方向比例趋势(输出).py
+│   ├── 登录前24h方向统计.py
+│   ├── 登录前24h移速统计.py
+│   
+│
+├── output/                   # 输出的数据表格和分析结果
+│   ├── csv_sheet
+│   │   ├──df_avg_data_per_typhoon.csv
+│   │   ├──df_landfall_points_schemeB.csv
+│   │   ├──df_pre_landfall.csv
+│   │   ├──df_region_filtered.csv
+│   ├── figures
+│   │   ├──NW方向比例趋势_1980-2024.png
+│   │   ├──方向分布_1980-2024.png
+│   │   ├──移速趋势_1980-2024.png
+│   ├──result_summary
+│   │   ├──NW方向比例趋势(输出).md
+│   │   ├──方向分布+移速趋势(输出).md
+│
+│
+└── README.md                 # 说明文件（重要）
