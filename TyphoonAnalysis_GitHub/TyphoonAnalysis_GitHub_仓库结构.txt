@@ -12,10 +12,10 @@ TyphoonAnalysis_GitHub/
 │
 ├── output/                   # 输出的数据表格和分析结果
 │   ├── csv_sheet
-│   │   ├──df_avg_data_per_typhoon.csv
-│   │   ├──df_landfall_points_schemeB.csv
-│   │   ├──df_pre_landfall.csv
-│   │   ├──df_region_filtered.csv
+│   │   ├──df_avg_data_per_typhoon.csv #登录前24h内平均移速和主导方向特征摘要
+│   │   ├──df_landfall_points_schemeB.csv #登陆点数据集
+│   │   ├──df_pre_landfall.csv #登陆前24h内轨迹集合
+│   │   ├──df_region_filtered.csv #东南沿海初步筛选数据集
 │   ├── figures
 │   │   ├──NW方向比例趋势_1980-2024.png
 │   │   ├──方向分布_1980-2024.png
