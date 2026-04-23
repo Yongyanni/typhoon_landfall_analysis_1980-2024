@@ -1,6 +1,6 @@
 TyphoonAnalysis_GitHub/
 │
-├── data/                     # 原始数据（如果文件不大）
+├── data/                     # 原始数据
 │   └── CMA/                  # 存放 CH1980BST.txt ~ CH2024BST.txt
 │
 ├── code/                     # 所有 Python 脚本
@@ -23,6 +23,8 @@ TyphoonAnalysis_GitHub/
 │   ├──result_summary
 │   │   ├──NW方向比例趋势(输出).md
 │   │   ├──方向分布+移速趋势(输出).md
+│   │   ├──登陆前24h方向统计(输出).md
+│   │   ├──登陆前24移速统计(输出).md
 │
 │
-└── README.md                 # 说明文件（重要）
+└── README(中文).md                 
