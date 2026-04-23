@@ -71,4 +71,4 @@ Citation (Suggested)
 If you use this code or these results in your own work, please cite this repository and the original CMA data:
 
 China Meteorological Administration (2024). CMA Best Track Data for Tropical Cyclones. Available at: http://tcdata.typhoon.org.cn/
-[Your Name]. (2025). Typhoon Landfall Analysis (1980–2024). GitHub. https://github.com/your-username/TyphoonAnalysis_GitHub
+[Yongyan Ni]. (2025). Typhoon Landfall Analysis (1980–2024). GitHub. https://github.com/Yongyanni/TyphoonAnalysis_GitHub
